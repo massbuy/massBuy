@@ -12,11 +12,23 @@ let routes = (app) => {
         }
     });
 
+    app.post('/package/user', async (req, res) => {
+        try {
+            let package = new Package(req.body);
+            package.status = "pending";
+            await package.save()
+            res.json(package)
+        }
+        catch (err) {
+            res.status(500).send(err)
+        }
+    });
+
     // get all packages
     app.get('/packages', async (req, res) => {
         try {
-            let packages = await Package.find({ status: "la" }).sort({ createdAt: -1 })
-                .populate("user_id", "firstname lastname")
+            let packages = await Package.find().sort({ createdAt: -1 })
+                .populate("product_id", "itemName price")
             res.json(packages)
         }
         catch (err) {
@@ -27,7 +39,18 @@ let routes = (app) => {
     app.get('/package/:id', async (req, res) => {
         try {
             let packages = await Package.find({ _id: req.params.id })
-                .populate("user_id", "firstname lastname")
+                .populate("product_id", "itemName price")
+            res.json(packages)
+        }
+        catch (err) {
+            res.status(500).send(err)
+        }
+    });
+
+    app.get('/package/user/:id', async (req, res) => {
+        try {
+            let packages = await Package.find({ user_id: req.params.id })
+                .populate("product_id", "itemName price")
             res.json(packages)
         }
         catch (err) {
