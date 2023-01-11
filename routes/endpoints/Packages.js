@@ -1,19 +1,16 @@
 const Package = require('../../models/packages');
-// const multer = require('multer');
-
-
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, './uploads/')
-//     },
-//     filename: function (req, files, cb) {
-//         cb(null, new Date().getMilliseconds() + files.originalname);
-//     }
-// });
-// const upload = multer({ storage: storage }).single('image');
 
 let routes = (app) => {
-
+    app.post('/package', async (req, res) => {
+        try {
+            let package = new Package(req.body);
+            await package.save()
+            res.json(package)
+        }
+        catch (err) {
+            res.status(500).send(err)
+        }
+    });
 
     // get all packages
     app.get('/packages', async (req, res) => {
