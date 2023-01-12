@@ -29,6 +29,7 @@ let routes = (app) => {
         try {
             let packages = await Package.find().sort({ createdAt: -1 })
                 .populate("product_id", "itemName price")
+                .populate("user_id", "firstname lastname role")
             res.json(packages)
         }
         catch (err) {
@@ -40,6 +41,7 @@ let routes = (app) => {
         try {
             let packages = await Package.find({ _id: req.params.id })
                 .populate("product_id", "itemName price")
+                .populate("user_id", "firstname lastname role")
             res.json(packages)
         }
         catch (err) {
