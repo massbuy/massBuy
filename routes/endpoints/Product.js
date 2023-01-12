@@ -94,6 +94,7 @@ let routes = (app) => {
         try {
             let products = await Product.find().sort({ createdAt: -1 }).limit(8)
                 .populate("user_id", "firstname lastname")
+                .populate("category_id", "title")
             res.json(products)
         }
         catch (err) {
