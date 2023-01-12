@@ -52,7 +52,7 @@ let routes = (app) => {
                     req.body.image = '/' + req.file.path;
                     try {
                         const { itemName, price, image, details, spec, feature,
-                            user_id } = req.body;
+                            user_id, category_id } = req.body;
                         if (!user_id)
                             return res.status(500).json({ msg: "Please Login In" })
                         if (!itemName || !price)
@@ -61,7 +61,7 @@ let routes = (app) => {
                             return res.status(500).json({ msg: "Please Upload Product Image" })
                         const newProduct = {
                             itemName, price: price.toLocaleString(), image, details, spec, feature,
-                            user_id
+                            user_id, category_id
                         };
                         let newProduct_ = new Product(newProduct);
                         await newProduct_.save()
@@ -81,6 +81,7 @@ let routes = (app) => {
         try {
             let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
                 .populate("user_id", "firstname lastname")
+                .populate("category_id", "title")
             res.json(products)
         }
         catch (err) {
