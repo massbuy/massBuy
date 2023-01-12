@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const CategorySchema = new mongoose.Schema({
-    title: { type: String, required: true, trim: true },
+    title: { type: String, required: true, trim: true, default: "Others" },
     createdBy: {
         type: mongoose.Types.ObjectId,
         ref: "users"
