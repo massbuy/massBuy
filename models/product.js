@@ -11,6 +11,10 @@ const ProductSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Types.ObjectId,
         ref: "users"
+    },
+    category_id: {
+        type: mongoose.Types.ObjectId,
+        ref: "categories"
     }
 }, {
     timestamps: true
