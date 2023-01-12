@@ -60,7 +60,7 @@ let routes = (app) => {
                         if (!image)
                             return res.status(500).json({ msg: "Please Upload Product Image" })
                         const newProduct = {
-                            itemName, price: price.toLocaleString(), image, details, spec, feature,
+                            itemName, price: Number(price).toLocaleString(), image, details, spec, feature,
                             user_id, category_id
                         };
                         let newProduct_ = new Product(newProduct);
