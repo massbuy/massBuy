@@ -80,7 +80,7 @@ let routes = (app) => {
     app.get('/products', async (req, res) => {
         try {
             let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
-                .populate("user_id", "firstname lastname")
+                .populate("user_id", "firstname lastname role")
                 .populate("category_id", "title")
             res.json(products)
         }
@@ -93,7 +93,7 @@ let routes = (app) => {
     app.get('/product-8', async (req, res) => {
         try {
             let products = await Product.find().sort({ createdAt: -1 }).limit(8)
-                .populate("user_id", "firstname lastname")
+                .populate("user_id", "firstname lastname role")
                 .populate("category_id", "title")
             res.json(products)
         }
