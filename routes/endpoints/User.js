@@ -166,13 +166,13 @@ let routes = (app) => {
 
     app.post("/login", async (req, res) => {
         try {
-            const { email, password } = req.body
+            const { email, password, status } = req.body
             const user = await User.findOne({ email })
             if (!user) return res.status(400).json({ msg: "This email does not exist." })
 
             const isMatch = await bcrypt.compare(password, user.password)
             if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
-
+            await User.updateOne({ email }, { status: "active" }, { returnOriginal: false })
             const access_token = createAccessToken({ id: user._id })
 
             const refresh_token = createRefreshToken({ id: user._id })
@@ -193,8 +193,10 @@ let routes = (app) => {
         }
     });
 
-    app.post("/logout", async (req, res) => {
+    app.post("/logout/:id", async (req, res) => {
         try {
+            // const { email, password, status } = req.body;
+            await User.updateOne({ _id: req.params.id }, { status: "inactive" }, { returnOriginal: false })
             res.clearCookie('refreshtoken', { path: '/user/refresh_token' })
             return res.json({ msg: "Logged out." })
         }
