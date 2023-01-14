@@ -1,6 +1,7 @@
 const User = require("../../models/user");
 const multer = require('multer');
 const bcrypt = require('bcrypt');
+const jwt = require("jsonwebtoken");
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, './uploads/')
@@ -162,11 +163,58 @@ let routes = (app) => {
             res.status(500).send(err)
         }
     });
+
+    app.post("/login", async (req, res) => {
+        try {
+            const { email, password } = req.body
+            const user = await User.findOne({ email })
+            if (!user) return res.status(400).json({ msg: "This email does not exist." })
+
+            const isMatch = await bcrypt.compare(password, user.password)
+            if (!isMatch) return res.status(400).json({ msg: "Password is incorrect." })
+
+            const access_token = createAccessToken({ id: user._id })
+
+            const refresh_token = createRefreshToken({ id: user._id })
+            res.cookie('refreshtoken', refresh_token, {
+                httpOnly: true,
+                path: '/user/refresh_token',
+                maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+            })
+
+            res.json({
+                msg: "Login successful!",
+                userID: user._id,
+                access_token
+            })
+        }
+        catch (err) {
+            res.status(500).send(err);
+        }
+    });
+
+    app.post("/logout", async (req, res) => {
+        try {
+            res.clearCookie('refreshtoken', { path: '/user/refresh_token' })
+            return res.json({ msg: "Logged out." })
+        }
+        catch (err) {
+            res.status(500).send(err);
+        }
+    });
 };
 
 function validateEmail(email) {
     const re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
     return re.test(email);
+};
+
+function createAccessToken(payload) {
+    return jwt.sign(payload, process.env.ACCESS_TOKEN_SECRET, { expiresIn: '10m' })
+};
+
+function createRefreshToken(payload) {
+    return jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '10m' })
 };
 
 module.exports = routes;

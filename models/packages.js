@@ -2,6 +2,8 @@ const mongoose = require('mongoose');
 
 const PackageSchema = new mongoose.Schema({
     status: { type: String, default: "native" },
+    package_title: { type: String },
+    duration: { type: String },
     product_id: [{
         type: mongoose.Types.ObjectId,
         ref: "products"

@@ -1,4 +1,5 @@
 const Package = require('../../models/packages');
+const { auth } = require("../middlewares/loggedIn");
 
 let routes = (app) => {
     app.post('/package', async (req, res) => {
@@ -12,7 +13,7 @@ let routes = (app) => {
         }
     });
 
-    app.post('/package/user', async (req, res) => {
+    app.post('/package/user', auth, async (req, res) => {
         try {
             let package = new Package(req.body);
             package.status = "pending";
