@@ -5,11 +5,12 @@ const app = express();
 // const PORT = process.env.PORT || 4000;
 const PORT = 4000;
 const cors = require("cors");
-// const CONNECTION_STRING = "mongodb://localhost:27017/massbuy";
-const CONNECTION_STRING = "mongodb+srv://meedoMontana:MontanaMongo01@myafricequipdb.rsxoiac.mongodb.net/MassBuy";
+const CONNECTION_STRING = "mongodb://localhost:27017/massbuy";
+// const CONNECTION_STRING = "mongodb+srv://meedoMontana:MontanaMongo01@myafricequipdb.rsxoiac.mongodb.net/MassBuy";
 const path = require('path');
 const routes = require('./routes');
 const bodyparser = require('body-parser');
+const { cloudinaryConfig } = require("./config/cloudinaryConfig")
 
 mongoose.set("strictQuery", false);
 
@@ -26,7 +27,7 @@ app.use(routes);
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(bodyparser.urlencoded({ limit: '50mb', extended: false }));
-
+app.use('*', cloudinaryConfig);
 
 app.get('/', (req, res) => {
     res.send("this is index route for endpoints, welcome to your MASSBUY project endpoints");

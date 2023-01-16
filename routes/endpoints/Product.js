@@ -1,55 +1,60 @@
 const Product = require('../../models/product');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const { CloudinaryStorage } = require('multer-storage-cloudinary');
+// const Datauri = require('datauri')
+// const { uploader, cloudinaryConfig } = require("../../config/cloudinaryConfig");
+// const { uploader } = require('cloudinary');
 
-const { google } = require('googleapis');
-// const GoogleStorage = require('google-drive-storage');
 
-// const auth = new google.auth.GoogleAuth({
-//     keyFile: './your-google-service-account-key-file.json',
-//     scopes: [
-//         'https://www.googleapis.com/auth/drive',
-//         'https://www.googleapis.com/auth/drive.file',
-//         'https://www.googleapis.com/auth/drive.appdata',
-//         'https://www.googleapis.com/auth/drive.readonly',
-//         'https://www.googleapis.com/auth/drive.metadata.readonly',
-//         'https://www.googleapis.com/auth/drive.metadata',
-//         'https://www.googleapis.com/auth/drive.photos.readonly'
-//     ],
+// const storage = multer.diskStorage({
+//     destination: function (req, file, cb) {
+//         cb(null, './uploads/')
+//     },
+//     filename: function (req, file, cb) {
+//         cb(null, new Date().getMilliseconds() + file.originalname);
+//     }
 // });
 
-// const drive = google.drive({ version: 'v3', auth });
 
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads/')
+const storage = new CloudinaryStorage({
+    cloudinary: cloudinary,
+    params: {
+        folder: './uploads/',
+        format: async (req, file) => 'webp', // supports promises as well
+        public_id: (req, file) => { new Date().getMilliseconds() + file.originalname },
     },
-    filename: function (req, files, cb) {
-        cb(null, new Date().getMilliseconds() + files.originalname);
-    }
 });
 
-// const uploading = multer({
-//     storage: GoogleStorage({
-//         drive: drive,
-//         driveId: '1WEEO3vGe-X7HmwEKffJlCw3xWtSMgL3k',
-//         filename: function (req, files, cb) {
-//             cb(null, new Date().getMilliseconds() + files.originalname);
-//         }
-//     })
-// });
+// const storage = multer.memoryStorage();
 
-// const upload = multer({ storage: uploading }).single('image');
 const upload = multer({ storage: storage }).single('image');
+const path=require("path");
+
 
 let routes = (app) => {
     app.post('/product', async (req, res) => {
         upload(req, res, async (err) => {
             if (err) {
+                console.log(err)
                 res.json({ msg: "File Missing " })
             } else {
                 if (req.file) {
-                    req.body.image = '/' + req.file.path;
+                    // const dUri = new Datauri();
+                    // const dataUri = req => dUri.format(path.extname(req.file.originalname).toString(), req.file.buffer);
+                    // const file = dataUri(req).content;
+                    // console.log(file)
+                    // console.log(req.file)
+                    // // uploader.upload(file).then((result) => {
+                    // //     console.log(result.url)
+                    // //     res.body.image = '/' + result.url
+                    // // })
+
+                    // uploader.upload('/' + req.file.path).then((result) => {
+                    //     console.log(result.url)
+                    //     res.body.image = '/' + result.url
+                    // })
+                    // req.body.image = '/' + req.file.path;
                     try {
                         const { itemName, price, image, details, spec, feature,
                             user_id, category_id } = req.body;
@@ -64,8 +69,9 @@ let routes = (app) => {
                             user_id, category_id
                         };
                         let newProduct_ = new Product(newProduct);
-                        await newProduct_.save()
-                        return res.status(200).json({ msg: "Product Successfully Created" })
+                        // await newProduct_.save()
+                        // return res.status(200).json({ msg: "Product Successfully Created" })
+                        return res.status(200).json(newProduct_)
 
                     }
                     catch (err) {

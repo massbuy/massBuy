@@ -5,8 +5,11 @@ const PackageSchema = new mongoose.Schema({
     package_title: { type: String },
     duration: { type: String },
     product_id: [{
-        type: mongoose.Types.ObjectId,
-        ref: "products"
+        item: {
+            type: mongoose.Types.ObjectId,
+            ref: "products"
+        },
+        qty: { type: Number, default: 1 }
     }],
     user_id: {
         type: mongoose.Types.ObjectId,

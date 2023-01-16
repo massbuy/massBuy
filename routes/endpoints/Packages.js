@@ -53,7 +53,7 @@ let routes = (app) => {
     app.get('/package/user/:id', async (req, res) => {
         try {
             let packages = await Package.find({ user_id: req.params.id })
-                .populate("product_id", "itemName price")
+                .populate("product_id.item", "itemName price")
             res.json(packages)
         }
         catch (err) {
