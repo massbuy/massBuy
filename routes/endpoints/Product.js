@@ -7,29 +7,31 @@ const { CloudinaryStorage } = require('multer-storage-cloudinary');
 // const { uploader } = require('cloudinary');
 
 
-// const storage = multer.diskStorage({
-//     destination: function (req, file, cb) {
-//         cb(null, './uploads/')
-//     },
-//     filename: function (req, file, cb) {
-//         cb(null, new Date().getMilliseconds() + file.originalname);
-//     }
-// });
-
-
-const storage = new CloudinaryStorage({
-    cloudinary: cloudinary,
-    params: {
-        folder: './uploads/',
-        format: async (req, file) => 'webp', // supports promises as well
-        public_id: (req, file) => { new Date().getMilliseconds() + file.originalname },
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads/')
     },
+    filename: function (req, file, cb) {
+        cb(null, new Date().getMilliseconds() + file.originalname);
+    }
 });
+
+
+// const storage = new CloudinaryStorage({
+//     cloudinary: cloudinary,
+//     params: {
+//         folder: './uploads/',
+//         format: async (req, file) => 'webp', // supports promises as well
+//         public_id: (req, file) => { new Date().getMilliseconds() + file.originalname },
+//     },
+// });
 
 // const storage = multer.memoryStorage();
 
 const upload = multer({ storage: storage }).single('image');
-const path=require("path");
+const path = require("path");
+
+const { auth, isLoggedIn } = require('../middlewares/loggedIn')
 
 
 let routes = (app) => {
@@ -54,7 +56,7 @@ let routes = (app) => {
                     //     console.log(result.url)
                     //     res.body.image = '/' + result.url
                     // })
-                    // req.body.image = '/' + req.file.path;
+                    req.body.image = '/' + req.file.path;
                     try {
                         const { itemName, price, image, details, spec, feature,
                             user_id, category_id } = req.body;
@@ -69,9 +71,9 @@ let routes = (app) => {
                             user_id, category_id
                         };
                         let newProduct_ = new Product(newProduct);
-                        // await newProduct_.save()
-                        // return res.status(200).json({ msg: "Product Successfully Created" })
-                        return res.status(200).json(newProduct_)
+                        await newProduct_.save()
+                        return res.status(200).json({ msg: "Product Successfully Created" })
+                        // return res.status(200).json(newProduct_)
 
                     }
                     catch (err) {
@@ -82,10 +84,10 @@ let routes = (app) => {
         });
     });
 
-    // get all products
-    app.get('/products', async (req, res) => {
+    // get product according to categories
+    app.get('/products-by-category', async (req, res) => {
         try {
-            let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
+            let products = await Product.find({ status: "active", category_id: req.query.category }).sort({ createdAt: -1 })
                 .populate("user_id", "firstname lastname role")
                 .populate("category_id", "title")
             res.json(products)
@@ -94,6 +96,19 @@ let routes = (app) => {
             res.status(400).send(err)
         }
     });
+
+    // get all products
+    // app.get('/products', async (req, res) => {
+    //     try {
+    //         let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
+    //             .populate("user_id", "firstname lastname role")
+    //             .populate("category_id", "title")
+    //         res.json(products)
+    //     }
+    //     catch (err) {
+    //         res.status(400).send(err)
+    //     }
+    // });
 
     // get latest 8 products
     app.get('/product-8', async (req, res) => {

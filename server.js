@@ -5,8 +5,8 @@ const app = express();
 // const PORT = process.env.PORT || 4000;
 const PORT = 4000;
 const cors = require("cors");
-// const CONNECTION_STRING = "mongodb://localhost:27017/massbuy";
-const CONNECTION_STRING = "mongodb+srv://meedoMontana:MontanaMongo01@myafricequipdb.rsxoiac.mongodb.net/MassBuy";
+const CONNECTION_STRING = "mongodb://localhost:27017/massbuy";
+// const CONNECTION_STRING = "mongodb+srv://meedoMontana:MontanaMongo01@myafricequipdb.rsxoiac.mongodb.net/MassBuy";
 const path = require('path');
 const routes = require('./routes');
 const bodyparser = require('body-parser');
@@ -26,7 +26,9 @@ app.use(cors());
 app.use(routes);
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(bodyparser.urlencoded({ limit: '50mb', extended: false }));
+// app.use(bodyparser.urlencoded({ limit: '50mb', extended: false }));
+app.use(bodyparser.json());
+app.use(bodyparser.urlencoded({ extended: true }));
 app.use('*', cloudinaryConfig);
 
 app.get('/', (req, res) => {
