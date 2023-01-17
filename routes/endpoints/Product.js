@@ -98,17 +98,17 @@ let routes = (app) => {
     });
 
     // get all products
-    // app.get('/products', async (req, res) => {
-    //     try {
-    //         let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
-    //             .populate("user_id", "firstname lastname role")
-    //             .populate("category_id", "title")
-    //         res.json(products)
-    //     }
-    //     catch (err) {
-    //         res.status(400).send(err)
-    //     }
-    // });
+    app.get('/products', async (req, res) => {
+        try {
+            let products = await Product.find({ status: "active" }).sort({ createdAt: -1 })
+                .populate("user_id", "firstname lastname role")
+                .populate("category_id", "title")
+            res.json(products)
+        }
+        catch (err) {
+            res.status(400).send(err)
+        }
+    });
 
     // get latest 8 products
     app.get('/product-8', async (req, res) => {
