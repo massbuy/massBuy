@@ -5,5 +5,6 @@ require('./endpoints/User')(app);
 require('./endpoints/Product')(app);
 require('./endpoints/Packages')(app);
 require('./endpoints/Category')(app);
+require('./endpoints/PackageCategory')(app);
 
 module.exports = app;
