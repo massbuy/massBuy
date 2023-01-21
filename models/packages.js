@@ -4,6 +4,9 @@ const PackageSchema = new mongoose.Schema({
     status: { type: String, default: "native" },
     package_title: { type: String },
     duration: { type: String },
+    package_category: {
+        type: mongoose.Types.ObjectId,
+        ref: "package-categories" },
     product_id: [{
         item: {
             type: mongoose.Types.ObjectId,
