@@ -33,6 +33,14 @@ const PackageSchema = new mongoose.Schema({
     },
     monthly: {
         type: String
+    },
+    balance: {
+        type: String,
+        default: 0
+    },
+    paid: {
+        type: String,
+        default: 0
     }
 }, {
     toJSON: {
