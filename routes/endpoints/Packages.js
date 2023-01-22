@@ -1,5 +1,6 @@
 const Package = require('../../models/packages');
 const { auth } = require("../middlewares/loggedIn");
+const User = require("../../models/user");
 
 let routes = (app) => {
     app.post('/package', async (req, res) => {
@@ -13,15 +14,18 @@ let routes = (app) => {
         }
     });
 
-    app.post('/package/user', auth, async (req, res) => {
+    app.post('/package/user', async (req, res) => {
         try {
+            // const { user_id } = req.body;
+            // const user = await User.findOne({ _id: user_id });
+            // if (!user) return res.status(400).json({ msg: "you must to login" })
             let package = new Package(req.body);
             package.status = "pending";
             await package.save()
             res.json(package)
         }
         catch (err) {
-            res.status(500).send(err)
+            res.status(500).send(err.message)
         }
     });
 

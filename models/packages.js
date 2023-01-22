@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const PackageSchema = new mongoose.Schema({
     status: { type: String, default: "native" },
     package_title: { type: String },
-    duration: { type: Number },
+    duration: { type: Number, minValue: 1, maxValue: 12 },
     package_category: {
         type: mongoose.Types.ObjectId,
         ref: "package-categories"
@@ -20,10 +20,10 @@ const PackageSchema = new mongoose.Schema({
         ref: "users"
     },
     payment_frequency: {
-        type: String, required: true
+        type: String, required: true, default: "daily"
     },
     total: {
-        type: Number, required: true
+        type: Number
     },
     daily: {
         type: Number
@@ -40,6 +40,7 @@ const PackageSchema = new mongoose.Schema({
             delete ret.__v;
             delete ret.createdAt;
             delete ret.updatedAt;
+            delete ret.password;
         },
     },
     timestamps: true
