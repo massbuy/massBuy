@@ -62,6 +62,18 @@ let routes = (app) => {
         }
     });
 
+    app.put('/package/user/:id', async (req, res) => {
+        try {
+            let update = req.body;
+            let package = await Package.updateOne({ _id: req.params.id }, update, { returnOriginal: false });
+            return res.json(package)
+        }
+        catch (err) {
+            res.status(500).send(err)
+            throw err
+        }
+    });
+
     app.delete('/package/:id', async (req, res) => {
         try {
             await Package.deleteOne()
