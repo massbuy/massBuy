@@ -20,7 +20,7 @@ const PackageSchema = new mongoose.Schema({
         ref: "users"
     },
     payment_frequency: {
-        type: { String, required: true }
+        type: String, required: true
     },
     total: {
         type: Number, required: true
