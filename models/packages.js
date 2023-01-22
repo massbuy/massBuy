@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const PackageSchema = new mongoose.Schema({
     status: { type: String, default: "native" },
     package_title: { type: String },
-    duration: { type: String },
+    duration: { type: Number },
     package_category: {
         type: mongoose.Types.ObjectId,
         ref: "package-categories"
@@ -21,6 +21,18 @@ const PackageSchema = new mongoose.Schema({
     },
     payment_frequency: {
         type: { String, required: true }
+    },
+    total: {
+        type: Number, required: true
+    },
+    daily: {
+        type: Number
+    },
+    weekly: {
+        type: Number
+    },
+    monthly: {
+        type: Number
     }
 }, {
     toJSON: {
