@@ -23,16 +23,16 @@ const PackageSchema = new mongoose.Schema({
         type: String, required: true, default: "daily"
     },
     total: {
-        type: Number
+        type: String
     },
     daily: {
-        type: Number
+        type: String
     },
     weekly: {
-        type: Number
+        type: String
     },
     monthly: {
-        type: Number
+        type: String
     }
 }, {
     toJSON: {

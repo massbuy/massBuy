@@ -57,9 +57,31 @@ let routes = (app) => {
 
     app.get('/package/user/:id', async (req, res) => {
         try {
+            let arr = [];
+            let duration;
             let packages = await Package.find({ user_id: req.params.id })
                 .populate("product_id.item", "itemName price")
-            res.json(packages)
+            packages.map((e, i) => {
+                duration = e.duration
+                e.product_id.map((a, b) => {
+                    arr.push(+a.item.price.split(",").join(""))
+                    return arr.reduce((a, b) => a + b, 0)
+                })
+            })
+            let total = arr.reduce((a, b) => a + b, 0);
+            let daily = total / (duration * 31)
+            let weekly = total / (duration * 4)
+            let monthly = total / (duration)
+            await Package.updateOne({ user_id: req.params.id }, {
+                total: total.toLocaleString(),
+                daily: Math.ceil(daily).toLocaleString(),
+                weekly: Math.ceil(weekly).toLocaleString(),
+                monthly: Math.ceil(monthly).toLocaleString(),
+            },
+                { returnOriginal: false })
+            let packagess = await Package.find({ user_id: req.params.id })
+                .populate("product_id.item", "itemName price")
+            res.json(packagess)
         }
         catch (err) {
             res.status(500).send(err)
