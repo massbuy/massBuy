@@ -6,7 +6,8 @@ const PackageSchema = new mongoose.Schema({
     duration: { type: String },
     package_category: {
         type: mongoose.Types.ObjectId,
-        ref: "package-categories" },
+        ref: "package-categories"
+    },
     product_id: [{
         item: {
             type: mongoose.Types.ObjectId,
@@ -17,6 +18,9 @@ const PackageSchema = new mongoose.Schema({
     user_id: {
         type: mongoose.Types.ObjectId,
         ref: "users"
+    },
+    payment_frequency: {
+        type: { String, required: true }
     }
 }, {
     toJSON: {
