@@ -43,8 +43,12 @@ const PackageSchema = new mongoose.Schema({
         default: 0
     },
     numberOfExpectedPayments: {
-        type: Number
+        type: Number,
+        default: 0
     },
+    nextPayment: {
+        type: String
+    }
 }, {
     toJSON: {
         transform(doc, ret) {
