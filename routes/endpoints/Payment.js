@@ -62,21 +62,6 @@ let routes = (app) => {
         });
     });
 
-    app.post('/package/user', async (req, res) => {
-        try {
-            // const { user_id } = req.body;
-            // const user = await User.findOne({ _id: user_id });
-            // if (!user) return res.status(400).json({ msg: "you must to login" })
-            let package = new Package(req.body);
-            package.status = "pending";
-            await package.save()
-            res.json(package)
-        }
-        catch (err) {
-            res.status(500).send(err.message)
-        }
-    });
-
     // get all payments
     app.get('/payments', async (req, res) => {
         try {
@@ -110,39 +95,6 @@ let routes = (app) => {
                 .populate("package_id", "package_title")
                 .populate("user_id", "firstname lastname")
             res.json(payments)
-        }
-        catch (err) {
-            res.status(500).send(err)
-        }
-    });
-
-    app.get('/package/user/:id', async (req, res) => {
-        try {
-            let arr = [];
-            let duration;
-            let packages = await Package.find({ user_id: req.params.id })
-                .populate("product_id.item", "itemName price")
-            packages.map((e, i) => {
-                duration = e.duration
-                e.product_id.map((a, b) => {
-                    arr.push(+a.item.price.split(",").join(""))
-                    return arr.reduce((a, b) => a + b, 0)
-                })
-            })
-            let total = arr.reduce((a, b) => a + b, 0);
-            let daily = total / (duration * 31)
-            let weekly = total / (duration * 4)
-            let monthly = total / (duration)
-            await Package.updateOne({ user_id: req.params.id }, {
-                total: total.toLocaleString(),
-                daily: Math.ceil(daily).toLocaleString(),
-                weekly: Math.ceil(weekly).toLocaleString(),
-                monthly: Math.ceil(monthly).toLocaleString(),
-            },
-                { returnOriginal: false })
-            let packagess = await Package.find({ user_id: req.params.id, status: "pending" })
-                .populate("product_id.item", "itemName price")
-            res.json(packagess)
         }
         catch (err) {
             res.status(500).send(err)
@@ -210,39 +162,6 @@ let routes = (app) => {
             throw err
         }
     });
-
-    // app.get('/cart/user/:id', async (req, res) => {
-    //     try {
-    //         let arr = [];
-    //         let duration;
-    //         let packages = await Package.find({ user_id: req.params.id })
-    //             .populate("product_id.item", "itemName price")
-    //         packages.map((e, i) => {
-    //             duration = e.duration
-    //             e.product_id.map((a, b) => {
-    //                 arr.push(+a.item.price.split(",").join(""))
-    //                 return arr.reduce((a, b) => a + b, 0)
-    //             })
-    //         })
-    //         let total = arr.reduce((a, b) => a + b, 0);
-    //         let daily = total / (duration * 31)
-    //         let weekly = total / (duration * 4)
-    //         let monthly = total / (duration)
-    //         await Package.updateOne({ user_id: req.params.id }, {
-    //             total: total.toLocaleString(),
-    //             daily: Math.ceil(daily).toLocaleString(),
-    //             weekly: Math.ceil(weekly).toLocaleString(),
-    //             monthly: Math.ceil(monthly).toLocaleString(),
-    //         },
-    //             { returnOriginal: false })
-    //         let packagess = await Package.find({ user_id: req.params.id, status: "cart" })
-    //             .populate("product_id.item", "itemName price")
-    //         res.json(packagess)
-    //     }
-    //     catch (err) {
-    //         res.status(500).send(err)
-    //     }
-    // });
 
     app.delete('/payment/:id', async (req, res) => {
         try {
