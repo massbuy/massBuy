@@ -16,11 +16,12 @@ let routes = (app) => {
 
     app.post('/package/user', async (req, res) => {
         try {
-            // const { user_id } = req.body;
+            const { total } = req.body;
             // const user = await User.findOne({ _id: user_id });
             // if (!user) return res.status(400).json({ msg: "you must to login" })
             let package = new Package(req.body);
             package.status = "pending";
+            package.balance = Number(total).toLocaleString();
             await package.save()
             res.json(package)
         }
@@ -69,14 +70,15 @@ let routes = (app) => {
                 })
             })
             let total = arr.reduce((a, b) => a + b, 0);
-            let daily = total / (duration * 31)
-            let weekly = total / (duration * 4)
-            let monthly = total / (duration)
+            let balance = packages.balance.split(",").join("")
+            let daily = balance / (duration * 31)
+            let weekly = balance / (duration * 4)
+            let monthly = balance / (duration)
             await Package.updateOne({ user_id: req.params.id }, {
                 total: total.toLocaleString(),
                 daily: Math.ceil(daily).toLocaleString(),
                 weekly: Math.ceil(weekly).toLocaleString(),
-                monthly: Math.ceil(monthly).toLocaleString(),
+                monthly: Math.ceil(monthly).toLocaleString()
             },
                 { returnOriginal: false })
             let packagess = await Package.find({ user_id: req.params.id, status: "pending" })
