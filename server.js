@@ -20,15 +20,18 @@ mongoose.connect(CONNECTION_STRING, {
 });
 
 mongoose.connection.on('open', () => console.log('Mongo Running'));
-mongoose.connection.on('error', (err) => console.log(err)); app.use(express.json());
+mongoose.connection.on('error', (err) => console.log(err));
+ 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.use(cors());
 app.use(routes);
 app.use('/uploads', express.static('uploads'));
 app.use(express.static(path.join(__dirname, 'public')));
 // app.use(bodyparser.urlencoded({ limit: '50mb', extended: false }));
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }));
+// app.use(bodyparser.json());
+// app.use(bodyparser.urlencoded({ extended: true }));
 app.use('*', cloudinaryConfig);
 
 app.get('/', (req, res) => {
