@@ -163,6 +163,21 @@ let routes = (app) => {
         }
     });
 
+    // add address
+    app.put('/address/:id', async (req, res) => {
+        try {
+            let user = await User.findOne({ _id: req.params.id })
+            user.address.push(req.body.address)
+            let update = user;
+            await User.updateOne({ _id: req.params.id }, update, { returnOriginal: false });
+            return res.json(user)
+        }
+        catch (err) {
+            res.status(500).send(err)
+            throw err
+        }
+    });
+
     app.get("/user/:id", async (req, res) => {
         try {
             let user = await User.findOne({ _id: req.params.id })
